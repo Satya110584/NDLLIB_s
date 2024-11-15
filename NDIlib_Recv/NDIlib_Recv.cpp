@@ -7,7 +7,7 @@
 #pragma comment(lib, "Processing.NDI.Lib.x64.lib")
 #else // _WIN64
 #pragma comment(lib, "Processing.NDI.Lib.x86.lib")
-#endif // _WIN64/Users/sraghuwanshi/Downloads/NDI SDK for Linux/examples/C++/NDIlib_Recv_Audio_16bpp/NDIlib_Recv_Audio_16bpp.cpp
+#endif // _WIN64
 #endif // _WIN32
 
 // RAII class for initializing and cleaning up NDI
