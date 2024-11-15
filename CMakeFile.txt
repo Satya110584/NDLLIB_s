@@ -1,0 +1,60 @@
+cmake_minimum_required(VERSION 3.10)
+
+# Project name
+project(NDIProject)
+
+# C++ standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Add the include directories
+include_directories(
+    ../../../include
+)
+
+# Specify the NDI library location
+set(NDILIB_DIR "../../../lib")
+
+# Optionally add the Blackmagic Design SDK path if needed
+if(${PROJECT_NAME} MATCHES "BMD")
+    include_directories("${CMAKE_SOURCE_DIR}/../BMDSDK/Linux/include")
+endif()
+
+# Add the source files
+file(GLOB SRC "*.cpp")
+
+# Define the output executable
+add_executable(${PROJECT_NAME} ${SRC})
+
+# Define NDI library file
+set(NDILIB_FILE "libndi.so.5")
+
+# Create a symlink for the NDI library
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+    ${NDILIB_DIR}/${NDILIB_FILE}
+    ${CMAKE_BINARY_DIR}/${NDILIB_FILE}
+)
+
+# Link the necessary libraries
+target_link_libraries(${PROJECT_NAME}
+    -L${NDILIB_DIR}/${NDILIB}
+    -Wl,-rpath=\$\$ORIGIN
+    -Wl,--allow-shlib-undefined
+    -Wl,--as-needed
+    ndi
+    dl
+)
+
+# Specify the cleaning step
+add_custom_target(clean
+    COMMAND ${CMAKE_COMMAND} -E remove ${PROJECT_NAME} ${NDILIB_FILE}
+    COMMENT "Cleaning up generated files"
+)
+
+# For a more complex build, if needed, you can configure the project to clean up generated files during build:
+# add_custom_target(
+#     clean-all
+#     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}
+#     COMMENT "Cleaning all build artifacts"
+# )
